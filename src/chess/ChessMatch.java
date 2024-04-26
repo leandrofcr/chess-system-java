@@ -33,6 +33,10 @@ public class ChessMatch {
         return currentPlayer;
     }
 
+    public boolean getCheck() {
+        return check;
+    }
+
     public ChessPiece[][] getPieces() {
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
 
@@ -50,6 +54,13 @@ public class ChessMatch {
         validateSourcePosition(source);
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
+
+        if (testCheck(currentPlayer)) {
+            undoMove(source, target, capturedPiece);
+            throw new ChessException("You can´t put yourself in check");
+        }
+
+        check = testCheck(opponent(currentPlayer));
         nextTurn();
         return (ChessPiece) capturedPiece;
     }
@@ -61,15 +72,16 @@ public class ChessMatch {
     }
 
     private Piece makeMove(Position source, Position target) {
-        Piece p = board.removePiece(source);
-        Piece capturedPieced = board.removePiece(target);
+        ChessPiece p = (ChessPiece) board.removePiece(source);
+        Piece capturedPiece = board.removePiece(target);
         board.placePiece(p, target);
 
-        if (capturedPieced != null) {
-            capturedPieces.add(capturedPieced);
+        if (capturedPiece != null) {
+            piecesOnTheBoard.remove(capturedPiece);
+            capturedPieces.add(capturedPiece);
         }
 
-        return capturedPieced;
+        return capturedPiece;
     }
 
     public void undoMove(Position source, Position target, Piece capturedPiece) {
@@ -120,6 +132,18 @@ public class ChessMatch {
             }
         }
         throw new IllegalStateException("There is no " + color + " king on the board");
+    }
+
+    private boolean testCheck(Color color) {
+        Position kingPosition = king(color).getChessPosition().toPosition();
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == opponent(color)).toList();
+        for (Piece p : opponentPieces) {
+            boolean[][] mat = p.possibleMoves();
+            if (mat[kingPosition.getRow()][kingPosition.getCol()]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void placeNewPiece(char col, int row, ChessPiece piece) {
