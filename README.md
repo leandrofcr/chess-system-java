@@ -9,7 +9,7 @@ This is a simple chess game implemented in Java to be played on the command line
 
 ## How to Play
 
-1. Clone or download this repository.
-2. Compile the source code using a Java compiler, or run the game using an IDE.
-3. Run the compiled program.
+1. Clone the repository
+2. Open the project in your IDE of choice
+3. Run the application
 4. Follow the instructions on the command line to input piece positions.
