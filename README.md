@@ -1,4 +1,4 @@
-# Chess Game in Java for Command Line - Work in progress :construction:
+# Chess Game in Java for Command Line
 
 This is a simple chess game implemented in Java to be played on the command line. The game allows two players to play chess by entering piece positions to visualize the pieces on the board.
 
